@@ -5,6 +5,21 @@ import { api, imgUrl, DEMO } from '../lib/api.js';
 import { useStore } from '../context/Store.jsx';
 import { formatKm, formatPrice, formatRupees, ordinalOwner } from '../lib/format.js';
 import { CarImage } from '../components/CarCard.jsx';
+import { PHOTOS } from '../../../shared/photos.js';
+
+// Credit line for the bundled sample photos (seller uploads have none).
+function PhotoCredit({ car, index }) {
+  const meta = PHOTOS[`${car.brand} ${car.model}`];
+  const cur = car.images[index];
+  if (!meta || !cur?.startsWith('/cars/')) return null;
+  const cr = meta.credits[meta.files.indexOf(cur.replace('/cars/', ''))];
+  return (
+    <p className="mt-3 text-xs text-black/50">
+      {meta.representative && 'Representative photo of a similar vehicle. '}
+      {cr && <>Photo: <a href={cr.page} target="_blank" rel="noreferrer" className="underline">{cr.author}</a> · <a href={cr.licenseUrl} target="_blank" rel="noreferrer" className="underline">{cr.license}</a></>}
+    </p>
+  );
+}
 
 function emi(price) {
   const P = price * 0.8, r = 0.095 / 12, n = 60;
@@ -66,6 +81,7 @@ export default function CarDetail() {
           <div className="relative rounded-[2rem] overflow-hidden bg-gradient-to-br from-[#f7f7f9] to-[#e3e6eb]">
             <CarImage car={{ ...car, images: car.images.slice(photo) }} className="w-full aspect-[16/10]" />
           </div>
+          <PhotoCredit car={car} index={photo} />
           {car.images.length > 1 && (
             <div className="flex gap-3 mt-3 overflow-x-auto">
               {car.images.map((im, i) => (
