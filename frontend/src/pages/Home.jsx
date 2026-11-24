@@ -25,7 +25,7 @@ function Hero() {
   const [color, setColor] = useState(COLORS[2]);
   return (
     <div className="grid lg:grid-cols-2 gap-6 px-5 sm:px-10 pt-6 pb-14 items-center">
-      <div className="order-2 lg:order-1">
+      <div className="order-2 lg:order-1 min-w-0">
         <div className="eyebrow mb-4">India's used car marketplace</div>
         <h1 className="text-5xl sm:text-7xl font-bold tracking-tight leading-[1.02]">
           Buy &amp; sell cars the <span className="text-accent">easy</span> way
@@ -53,7 +53,7 @@ function Hero() {
         </div>
       </div>
 
-      <div className="order-1 lg:order-2 relative">
+      <div className="order-1 lg:order-2 relative min-w-0">
         <div className="rounded-[2rem] bg-gradient-to-br from-[#f7f7f9] via-[#eceef2] to-[#e0e3e9] overflow-hidden relative">
           <Suspense fallback={<div className="h-[380px] grid place-items-center"><CarArt type={body} color={color.hex} className="w-3/4" /></div>}>
             <Car3D type={body} color={color.hex} height={400} />

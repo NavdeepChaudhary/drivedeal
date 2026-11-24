@@ -1,5 +1,5 @@
-import { Suspense, useMemo, useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Suspense, useEffect, useMemo, useRef } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { ContactShadows, Environment, Lightformer, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -111,10 +111,23 @@ function CarModel({ type = 'hatchback', color = '#c8202b', spin = true }) {
   );
 }
 
+// Pull the camera back on narrow (portrait) screens so the whole car stays in view.
+function FitCamera() {
+  const { camera, size } = useThree();
+  useEffect(() => {
+    const aspect = size.width / size.height;
+    const k = aspect < 1.5 ? Math.min(1.5 / Math.max(aspect, 0.5), 2.2) : 1;
+    camera.position.set(5.2 * k, 2.1 * k, 5.4 * k);
+    camera.updateProjectionMatrix();
+  }, [camera, size.width, size.height]);
+  return null;
+}
+
 export default function Car3D({ type = 'hatchback', color = '#c8202b', height = 420, controls = true, spin = true, className = '' }) {
   return (
-    <div className={className} style={{ height }}>
+    <div className={`w-full min-w-0 ${className}`} style={{ height }}>
       <Canvas shadows dpr={[1, 1.75]} camera={{ position: [5.2, 2.1, 5.4], fov: 32 }} gl={{ antialias: true }}>
+        <FitCamera />
         <Suspense fallback={null}>
           <ambientLight intensity={0.5} />
           <directionalLight position={[4, 6, 3]} intensity={1.4} castShadow />
