@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { BadgeCheck, Calendar, Check, Fuel, Gauge, GitCompare, Heart, MapPin, MessageCircle, Settings2, Users, Hash } from 'lucide-react';
+import { BadgeCheck, Calendar, Check, Fuel, Gauge, GitCompare, Heart, MapPin, MessageCircle, Settings2, Sparkles, Users, Hash } from 'lucide-react';
 import { api, imgUrl, DEMO } from '../lib/api.js';
 import { useStore } from '../context/Store.jsx';
 import { formatKm, formatPrice, formatRupees, ordinalOwner } from '../lib/format.js';
 import { CarImage } from '../components/CarCard.jsx';
 import { PHOTOS } from '../../../shared/photos.js';
+import { dealRating, estimatePrice } from '../../../shared/pricing.js';
 
 // Credit line for the bundled sample photos (seller uploads have none).
 function PhotoCredit({ car, index }) {
@@ -49,6 +50,9 @@ export default function CarDetail() {
   );
   if (!car) return <div className="px-5 sm:px-10 py-10"><div className="h-[480px] rounded-[2rem] bg-mist animate-pulse" /></div>;
 
+  // AutoPrice check (skipped when we can't be confident, e.g. collectable classics)
+  const est = estimatePrice({ brand: car.brand, model: car.model, variant: car.variant, year: car.year, km: car.km, fuel: car.fuel, transmission: car.transmission, owners: car.owners, city: car.city });
+  const check = est && est.confidence !== 'Low' ? { est, rating: dealRating(car.price, est.estimate) } : null;
   const saved = wish.includes(car.id);
   const comparing = compare.includes(car.id);
   const isOwner = user && user.id === car.sellerId;
@@ -128,6 +132,19 @@ export default function CarDetail() {
             <h1 className="text-2xl font-bold leading-tight">{car.title}</h1>
             <div className="mt-4 text-4xl font-bold tracking-tight">{formatPrice(car.price)}</div>
             <div className="text-sm text-black/50 mt-1">{formatRupees(car.price)}</div>
+            {check && (
+              <div className={`mt-4 rounded-2xl p-3 text-sm flex items-start gap-2.5 ${check.rating.id === 'great' ? 'bg-emerald-50 text-emerald-900' : check.rating.id === 'high' ? 'bg-amber-50 text-amber-900' : 'bg-mist'}`}>
+                <Sparkles size={16} className="mt-0.5 shrink-0" />
+                <div>
+                  <b>{check.rating.label}</b>
+                  <span className="block text-xs opacity-80 mt-0.5">
+                    AutoPrice estimates {formatPrice(check.est.estimate)}{' '}
+                    ({check.rating.id === 'fair' ? 'within 8% of this price' : `${Math.abs(Math.round(check.rating.pct * 100))}% ${check.rating.pct < 0 ? 'below' : 'above'}`}).{' '}
+                    <Link to={`/autoprice?${new URLSearchParams({ brand: car.brand, model: car.model, variant: car.variant || '', year: car.year, km: car.km, fuel: car.fuel, transmission: car.transmission, owners: car.owners, city: car.city })}`} className="underline">See why</Link>
+                  </span>
+                </div>
+              </div>
+            )}
             <div className="mt-4 p-3 rounded-2xl bg-mist text-sm">
               EMI from <b>{formatRupees(emi(car.price))}</b>/month <span className="text-black/50">(20% down, 5 yrs, 9.5%)</span>
               <Link to={`/emi?price=${car.price}`} className="block mt-1 underline font-medium">Customise EMI</Link>

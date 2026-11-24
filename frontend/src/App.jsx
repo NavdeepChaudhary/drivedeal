@@ -12,6 +12,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard.jsx'));
 const Messages = lazy(() => import('./pages/Messages.jsx'));
 const Compare = lazy(() => import('./pages/Compare.jsx'));
 const Emi = lazy(() => import('./pages/Emi.jsx'));
+const AutoPrice = lazy(() => import('./pages/AutoPrice.jsx'));
 const Static = lazy(() => import('./pages/Static.jsx'));
 const Admin = lazy(() => import('./pages/Admin.jsx'));
 
@@ -39,6 +40,7 @@ export default function App() {
             <Route path="messages/:carId/:buyerId" element={<Messages />} />
             <Route path="compare" element={<Compare />} />
             <Route path="emi" element={<Emi />} />
+            <Route path="autoprice" element={<AutoPrice />} />
             <Route path="about" element={<Static page="about" />} />
             <Route path="contact" element={<Static page="contact" />} />
             <Route path="admin" element={<Admin />} />

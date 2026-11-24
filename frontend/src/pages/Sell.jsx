@@ -1,20 +1,36 @@
 import { useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ImagePlus, Info, X } from 'lucide-react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { ImagePlus, Info, Sparkles, X } from 'lucide-react';
 import { api, DEMO } from '../lib/api.js';
 import { useStore } from '../context/Store.jsx';
 import CarArt from '../components/CarArt.jsx';
+import { formatPrice } from '../lib/format.js';
 import { BRANDS, CITIES, COLORS, FUELS, MODEL_OPTIONS, TRANSMISSIONS } from '../../../shared/cars.js';
+import { estimatePrice } from '../../../shared/pricing.js';
 
 const FEATURES = ['ABS with EBD', 'Dual airbags', 'Touchscreen infotainment', 'Reverse camera', 'Alloy wheels', 'Automatic climate control', 'Sunroof', 'Cruise control', 'Keyless entry', 'Leather seats', 'Rear parking sensors', 'Android Auto & Apple CarPlay'];
 
 export default function Sell() {
   const { user, ready, notify } = useStore();
   const nav = useNavigate();
-  const [f, setF] = useState({
-    brand: '', model: '', variant: '', year: 2020, price: '', km: '', fuel: 'Petrol', transmission: 'Manual',
-    owners: 1, city: '', color: COLORS[0].name, bodyType: 'hatchback', description: '', features: [],
+  const [params] = useSearchParams();
+  // the AutoPrice page can send people here with their car already filled in
+  const [f, setF] = useState(() => {
+    const q = (k, d) => params.get(k) || d;
+    const brand = BRANDS.includes(q('brand')) ? q('brand') : '';
+    const m = (MODEL_OPTIONS[brand] || []).find((x) => x.model === q('model'));
+    return {
+      brand, model: m ? m.model : '', variant: m ? q('variant', '') : '', year: Number(q('year', 2020)) || 2020,
+      price: q('price', ''), km: q('km', ''), fuel: m && m.fuels.includes(q('fuel')) ? q('fuel') : m ? m.fuels[0] : 'Petrol',
+      transmission: m && m.transmissions.includes(q('transmission')) ? q('transmission') : m ? m.transmissions[0] : 'Manual',
+      owners: Number(q('owners', 1)) || 1, city: CITIES.some((c) => c.city === q('city')) ? q('city') : '',
+      color: COLORS[0].name, bodyType: m ? m.bodyType : 'hatchback', description: '', features: [],
+    };
   });
+  const suggestion = useMemo(() => {
+    if (!f.brand || !f.model || f.km === '' || Number(f.km) < 0) return null;
+    return estimatePrice({ ...f, condition: 'good' });
+  }, [f]);
   const [files, setFiles] = useState([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
@@ -30,8 +46,8 @@ export default function Sell() {
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">Log in to list your car</h1>
         <p className="mt-4 text-black/60">It's free and takes a minute.</p>
         <div className="mt-8 flex gap-3 justify-center">
-          <Link to="/login" state={{ from: '/sell' }} className="btn btn-dark">Log in</Link>
-          <Link to="/signup" state={{ from: '/sell' }} className="btn btn-ghost">Create account</Link>
+          <Link to="/login" state={{ from: `/sell${params.toString() ? `?${params}` : ''}` }} className="btn btn-dark">Log in</Link>
+          <Link to="/signup" state={{ from: `/sell${params.toString() ? `?${params}` : ''}` }} className="btn btn-ghost">Create account</Link>
         </div>
       </div>
     );
@@ -84,7 +100,7 @@ export default function Sell() {
               <input id="variant" className="input" value={f.variant} onChange={(e) => set('variant', e.target.value)} placeholder="e.g. XZ+" /></div>
             <div><label className="eyebrow block mb-2" htmlFor="year">Year</label>
               <select id="year" className="input" value={f.year} onChange={(e) => set('year', e.target.value)}>
-                {Array.from({ length: 40 }, (_, i) => 2026 - i).map((y) => <option key={y}>{y}</option>)}</select></div>
+                {Array.from({ length: 70 }, (_, i) => 2026 - i).map((y) => <option key={y}>{y}</option>)}</select></div>
             <div><label className="eyebrow block mb-2" htmlFor="price">Asking price (₹)</label>
               <input id="price" required type="number" min="10000" className="input" value={f.price} onChange={(e) => set('price', e.target.value)} placeholder="e.g. 650000" /></div>
             <div><label className="eyebrow block mb-2" htmlFor="km">Kilometres driven</label>
@@ -147,6 +163,15 @@ export default function Sell() {
             <div className="mt-3 font-semibold">{f.year} {f.brand} {f.model} {f.variant}</div>
             <div className="text-sm text-black/50">{f.fuel} · {f.transmission}{f.city ? ` · ${f.city}` : ''}</div>
           </div>
+          {suggestion && (
+            <div className="card p-5">
+              <div className="eyebrow mb-2 flex items-center gap-1.5"><Sparkles size={13} /> AutoPrice</div>
+              <div className="text-2xl font-bold tracking-tight">{formatPrice(suggestion.low)} – {formatPrice(suggestion.high)}</div>
+              <p className="text-sm text-black/60 mt-1">Fair price for a car in good condition: <b>{formatPrice(suggestion.estimate)}</b>. Confidence: {suggestion.confidence}.</p>
+              <button type="button" className="btn btn-ghost w-full mt-3 !py-2" onClick={() => set('price', suggestion.estimate)}>Use {formatPrice(suggestion.estimate)} as my price</button>
+              <Link to={`/autoprice?${new URLSearchParams({ brand: f.brand, model: f.model, variant: f.variant, year: f.year, km: f.km, fuel: f.fuel, transmission: f.transmission, owners: f.owners, city: f.city })}`} className="block text-center text-sm underline mt-3">See how this was worked out</Link>
+            </div>
+          )}
           {err && <p role="alert" className="text-sm text-red-600">{err}</p>}
           <button className="btn btn-dark w-full" disabled={busy || DEMO}>{busy ? 'Submitting…' : 'Submit listing'}</button>
         </aside>

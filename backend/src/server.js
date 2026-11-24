@@ -12,6 +12,7 @@ import multer from 'multer';
 import { Server as IOServer } from 'socket.io';
 import { db, carRow, CAR_SELECT } from './db.js';
 import { seedIfEmpty } from './seed.js';
+import { BRANDS } from '../../shared/cars.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 5000;
@@ -167,7 +168,7 @@ function validateCar(b) {
     features: [],
   };
   try { out.features = (Array.isArray(b.features) ? b.features : JSON.parse(b.features || '[]')).map(String).slice(0, 20); } catch { /* ignore */ }
-  if (!['Tata', 'Mahindra', 'Maruti Suzuki', 'Force Motors', 'Hindustan Motors'].includes(out.brand)) err.push('Choose an Indian brand from the list.');
+  if (!BRANDS.includes(out.brand)) err.push('Choose an Indian brand from the list.');
   if (!out.model) err.push('Enter the model.');
   if (!(out.year >= 1950 && out.year <= 2027)) err.push('Enter a valid year.');
   if (!(out.price >= 10000)) err.push('Enter a valid price in rupees.');

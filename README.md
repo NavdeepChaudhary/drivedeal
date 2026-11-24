@@ -8,7 +8,7 @@ Buy and sell **Indian cars** online: Tata, Mahindra, Maruti Suzuki, Force Motors
 
 ## Features
 
-Browse with filters (brand, budget, city, fuel, transmission, body type, year, km) · Car details with a **3D viewer** · Sell your car with photo upload · Login / Signup · Dashboard (my listings, saved cars) · **Live chat** between buyer and seller · Compare up to 3 cars · EMI calculator · Verified-seller badge · **Admin panel** (approve listings, verify sellers, read contact messages) · About · Contact
+**AutoPrice** (fair used-car price estimator: depreciation by age, adjusted for km, fuel, gearbox, owners, city and condition, with every adjustment explained; also suggests a price in the Sell form and gives a "Price check" badge on every car) · Full catalogue of Indian models from Tata, Mahindra, Maruti Suzuki, Force Motors, Hindustan Motors and Premier · Browse with filters (brand, budget, city, fuel, transmission, body type, year, km) · Car details with a **3D viewer** · Sell your car with photo upload · Login / Signup · Dashboard (my listings, saved cars) · **Live chat** between buyer and seller · Compare up to 3 cars · EMI calculator · Verified-seller badge · **Admin panel** (approve listings, verify sellers, read contact messages) · About · Contact
 
 ## Run it on your computer
 

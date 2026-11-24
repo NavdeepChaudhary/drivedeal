@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, BadgeCheck, GitCompare, MessageCircle, Search, ShieldCheck, Calculator, Camera, Handshake } from 'lucide-react';
+import { ArrowRight, BadgeCheck, GitCompare, MessageCircle, Search, ShieldCheck, Calculator, Sparkles, Handshake } from 'lucide-react';
 import { Section, More } from '../components/Layout.jsx';
 import CarCard from '../components/CarCard.jsx';
 import { api, imgUrl } from '../lib/api.js';
@@ -11,7 +11,8 @@ const BRAND_NOTE = {
   Mahindra: 'Thar, XUV700, Scorpio',
   'Maruti Suzuki': 'Swift, Brezza, Ertiga',
   'Force Motors': 'Gurkha, Trax',
-  'Hindustan Motors': 'Ambassador classics',
+  'Hindustan Motors': 'Ambassador, Contessa',
+  Premier: 'Padmini classics',
 };
 
 function Hero() {
@@ -54,6 +55,7 @@ function Hero() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link to="/browse" className="btn btn-light">Browse cars <ArrowRight size={16} /></Link>
             <Link to="/sell" className="btn border-white/40 text-white hover:bg-white/10">Sell your car</Link>
+            <Link to="/autoprice" className="btn border-white/40 text-white hover:bg-white/10"><Sparkles size={16} /> Check car price</Link>
           </div>
         </div>
 
@@ -76,7 +78,7 @@ const FEATURES = [
   [GitCompare, 'Compare side by side', 'Put up to 3 cars next to each other: price, km, fuel, features.'],
   [Calculator, 'EMI calculator', 'Plan your monthly payment before you visit the showroom.'],
   [ShieldCheck, 'Reviewed listings', 'Every new listing is approved by an admin before it goes live.'],
-  [Camera, 'Photos & full details', 'Owners, RTO, km driven, features: everything in one place.'],
+  [Sparkles, 'AutoPrice estimator', 'Find out what any Indian car is worth, or check if a deal is fair, in seconds.'],
 ];
 
 export default function Home() {
@@ -92,7 +94,7 @@ export default function Home() {
       <Hero />
 
       <Section eyebrow="Shop by brand" title="Made in India">
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {brands.map(({ brand, n }) => (
             <Link key={brand} to={`/browse?brand=${encodeURIComponent(brand)}`} className="card p-5 hover:bg-mist transition-colors group">
               <div className="text-xl font-semibold">{brand}</div>

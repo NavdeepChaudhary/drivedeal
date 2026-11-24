@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Car, GitCompare, Heart, Menu, X, ArrowRight, Info } from 'lucide-react';
+import { Car, GitCompare, Heart, Menu, X, ArrowRight } from 'lucide-react';
 import { useStore } from '../context/Store.jsx';
-import { DEMO } from '../lib/api.js';
 
 export function Logo({ light = false }) {
   return (
@@ -18,6 +17,7 @@ export function Logo({ light = false }) {
 const links = [
   ['/browse', 'Buy cars'],
   ['/sell', 'Sell your car'],
+  ['/autoprice', 'AutoPrice'],
   ['/emi', 'EMI calculator'],
   ['/about', 'About'],
   ['/contact', 'Contact'],
@@ -71,11 +71,11 @@ function Footer() {
       <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
         <div className="lg:col-span-2 max-w-sm">
           <Logo />
-          <p className="mt-4 text-sm text-black/60">India's simple way to buy and sell cars from Tata, Mahindra, Maruti Suzuki, Force Motors and Hindustan Motors.</p>
+          <p className="mt-4 text-sm text-black/60">India's simple way to buy and sell cars from Tata, Mahindra, Maruti Suzuki, Force Motors, Hindustan Motors and Premier.</p>
         </div>
         <div className="flex flex-col gap-3 text-sm">
           <span className="eyebrow">Explore</span>
-          <Link to="/browse">Buy cars</Link><Link to="/sell">Sell your car</Link><Link to="/compare">Compare</Link><Link to="/emi">EMI calculator</Link>
+          <Link to="/browse">Buy cars</Link><Link to="/sell">Sell your car</Link><Link to="/compare">Compare</Link><Link to="/autoprice">AutoPrice</Link><Link to="/emi">EMI calculator</Link>
         </div>
         <div className="flex flex-col gap-3 text-sm">
           <span className="eyebrow">Company</span>
@@ -105,12 +105,6 @@ export default function Layout() {
   return (
     <div className="p-2 sm:p-5">
       <div className="mx-auto max-w-[1280px] bg-white rounded-[1.75rem] sm:rounded-[2.5rem] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.25)] overflow-hidden">
-        {DEMO && (
-          <div className="bg-ink text-white text-xs sm:text-sm px-5 py-2.5 flex items-center justify-center gap-2 text-center">
-            <Info size={15} className="shrink-0" />
-            <span>Demo preview: browsing, filters, compare and EMI work here. Login, selling, chat and admin need the full version.</span>
-          </div>
-        )}
         <Navbar />
         <main key={pathname}><Outlet /></main>
         <Footer />
