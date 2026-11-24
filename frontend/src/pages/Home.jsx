@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, BadgeCheck, GitCompare, MessageCircle, Search, ShieldCheck, Calculator, Camera, Handshake } from 'lucide-react';
 import { Section, More } from '../components/Layout.jsx';
@@ -6,8 +6,6 @@ import CarCard from '../components/CarCard.jsx';
 import CarArt from '../components/CarArt.jsx';
 import { api } from '../lib/api.js';
 import { COLORS } from '../../../shared/cars.js';
-
-const Car3D = lazy(() => import('../components/Car3D.jsx'));
 
 const BODY = ['hatchback', 'sedan', 'suv', 'mpv'];
 const BRAND_NOTE = {
@@ -55,11 +53,8 @@ function Hero() {
 
       <div className="order-1 lg:order-2 relative min-w-0">
         <div className="rounded-[2rem] bg-gradient-to-br from-[#f7f7f9] via-[#eceef2] to-[#e0e3e9] overflow-hidden relative">
-          <Suspense fallback={<div className="h-[380px] grid place-items-center"><CarArt type={body} color={color.hex} className="w-3/4" /></div>}>
-            <Car3D type={body} color={color.hex} height={400} />
-          </Suspense>
+          <div className="h-[400px] grid place-items-center px-6 pb-12"><CarArt type={body} color={color.hex} className="w-full max-w-md drop-shadow-xl" /></div>
           <span className="chip absolute top-4 left-4 !bg-white shadow"><BadgeCheck size={14} className="text-emerald-600" /> Verified sellers</span>
-          <span className="chip absolute top-4 right-4 !bg-ink !text-white">Drag to rotate</span>
           <div className="absolute bottom-4 left-4 right-4 flex flex-wrap items-center justify-between gap-3">
             <div className="flex gap-1.5 bg-white/90 backdrop-blur rounded-full p-1" role="group" aria-label="Body type">
               {BODY.map((b) => (

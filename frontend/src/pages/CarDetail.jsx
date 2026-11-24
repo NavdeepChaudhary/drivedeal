@@ -1,12 +1,10 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { BadgeCheck, Calendar, Check, Fuel, Gauge, GitCompare, Heart, MapPin, MessageCircle, Settings2, Users, Hash, Box, Image as ImageIcon } from 'lucide-react';
+import { BadgeCheck, Calendar, Check, Fuel, Gauge, GitCompare, Heart, MapPin, MessageCircle, Settings2, Users, Hash } from 'lucide-react';
 import { api, imgUrl, DEMO } from '../lib/api.js';
 import { useStore } from '../context/Store.jsx';
 import { formatKm, formatPrice, formatRupees, ordinalOwner } from '../lib/format.js';
 import { CarImage } from '../components/CarCard.jsx';
-
-const Car3D = lazy(() => import('../components/Car3D.jsx'));
 
 function emi(price) {
   const P = price * 0.8, r = 0.095 / 12, n = 60;
@@ -19,13 +17,12 @@ export default function CarDetail() {
   const { user, wish, toggleWish, compare, toggleCompare, notify } = useStore();
   const [car, setCar] = useState(null);
   const [error, setError] = useState('');
-  const [view, setView] = useState('photo');
   const [photo, setPhoto] = useState(0);
   const [msg, setMsg] = useState('Hi, is this car still available?');
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
-    setCar(null); setError(''); setView('photo'); setPhoto(0);
+    setCar(null); setError(''); setPhoto(0);
     api.car(id).then((r) => setCar(r.car)).catch((e) => setError(e.message));
   }, [id]);
 
@@ -67,20 +64,9 @@ export default function CarDetail() {
       <div className="grid lg:grid-cols-[1.4fr_1fr] gap-8">
         <div>
           <div className="relative rounded-[2rem] overflow-hidden bg-gradient-to-br from-[#f7f7f9] to-[#e3e6eb]">
-            {view === '3d' ? (
-              <Suspense fallback={<div className="h-[420px] grid place-items-center text-black/40">Loading 3D…</div>}>
-                <Car3D type={car.bodyType} color={car.colorHex || '#c8202b'} height={440} />
-              </Suspense>
-            ) : (
-              <CarImage car={{ ...car, images: car.images.slice(photo) }} className="w-full aspect-[16/10]" />
-            )}
-            <div className="absolute top-4 left-4 flex gap-1 bg-white/90 backdrop-blur rounded-full p-1">
-              <button onClick={() => setView('photo')} aria-pressed={view === 'photo'} className={`px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5 ${view === 'photo' ? 'bg-ink text-white' : ''}`}><ImageIcon size={14} /> Photos</button>
-              <button onClick={() => setView('3d')} aria-pressed={view === '3d'} className={`px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5 ${view === '3d' ? 'bg-ink text-white' : ''}`}><Box size={14} /> 3D view</button>
-            </div>
-            {view === '3d' && <span className="chip absolute top-4 right-4 !bg-ink !text-white">Drag to rotate</span>}
+            <CarImage car={{ ...car, images: car.images.slice(photo) }} className="w-full aspect-[16/10]" />
           </div>
-          {car.images.length > 1 && view === 'photo' && (
+          {car.images.length > 1 && (
             <div className="flex gap-3 mt-3 overflow-x-auto">
               {car.images.map((im, i) => (
                 <button key={im} onClick={() => setPhoto(i)} aria-label={`Photo ${i + 1}`} className={`shrink-0 rounded-xl overflow-hidden border-2 ${photo === i ? 'border-ink' : 'border-transparent'}`}>
