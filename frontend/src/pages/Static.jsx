@@ -4,6 +4,12 @@ import { BadgeCheck, Mail, MapPin, ShieldCheck, Zap } from 'lucide-react';
 import { api, DEMO } from '../lib/api.js';
 import { useStore } from '../context/Store.jsx';
 import { Section } from '../components/Layout.jsx';
+import { HERO, PHOTOS } from '../../../shared/photos.js';
+
+const CREDITS = [
+  { for: `Home page (${HERO.car})`, ...HERO.credit },
+  ...Object.entries(PHOTOS).flatMap(([car, p]) => p.credits.map((c) => ({ for: car, ...c }))),
+];
 
 function About() {
   return (
@@ -25,6 +31,18 @@ function About() {
             <div key={t} className="card p-7"><Icon size={26} /><h3 className="mt-5 text-2xl font-semibold">{t}</h3><p className="mt-2 text-black/60">{d}</p></div>
           ))}
         </div>
+      </Section>
+      <Section eyebrow="Thank you" title="Photo credits">
+        <p className="text-black/60 max-w-2xl">Car photos are free to use and come from talented photographers on Unsplash. Tap a title to see the original.</p>
+        <ul className="mt-6 grid sm:grid-cols-2 gap-3">
+          {CREDITS.map((c) => (
+            <li key={c.page} className="card p-4 text-sm">
+              <div className="eyebrow">{c.for}</div>
+              <a href={c.page} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-2">{c.title}</a>
+              <div className="text-black/60">by {c.author} · <a href={c.licenseUrl} target="_blank" rel="noreferrer" className="underline">{c.license}</a></div>
+            </li>
+          ))}
+        </ul>
       </Section>
       <section className="px-5 sm:px-10 pb-6">
         <div className="rounded-[2rem] bg-gradient-to-br from-[#16171c] to-[#0a0a0d] text-white text-center px-6 py-14">

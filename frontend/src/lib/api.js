@@ -4,7 +4,13 @@
 export const DEMO = import.meta.env.MODE === 'demo';
 const BASE = import.meta.env.VITE_API_URL || '';
 
-export const imgUrl = (p) => (p && p.startsWith('/uploads') ? BASE + p : p);
+// /uploads/... are seller photos served by the API; /cars/... are bundled photos (honour the Pages sub-path).
+export const imgUrl = (p) => {
+  if (!p) return p;
+  if (p.startsWith('/uploads')) return BASE + p;
+  if (p.startsWith('/cars/') || p.startsWith('/hero/')) return import.meta.env.BASE_URL + p.slice(1);
+  return p;
+};
 export const getToken = () => { try { return localStorage.getItem('dd_token'); } catch { return null; } };
 export const setToken = (t) => { try { t ? localStorage.setItem('dd_token', t) : localStorage.removeItem('dd_token'); } catch { /* ignore */ } };
 

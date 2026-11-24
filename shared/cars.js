@@ -2,6 +2,8 @@
 // static GitHub Pages demo (as its built-in "database").
 // Indian brands only: Tata, Mahindra, Maruti Suzuki, Force Motors, Hindustan Motors.
 
+import { PHOTOS } from './photos.js';
+
 export const BRANDS = ['Tata', 'Mahindra', 'Maruti Suzuki', 'Force Motors', 'Hindustan Motors'];
 
 export const CITIES = [
@@ -125,7 +127,10 @@ export function buildSeedCars() {
         : newLakh * 100000 * Math.pow(0.9, age) * (1 - Math.min(km / 400000, 0.2));
       price = Math.max(Math.round(price / 5000) * 5000, 50000);
       const loc = pick(CITIES);
-      const color = pick(COLORS);
+      const photo = PHOTOS[`${brand} ${model}`];
+      // when a real photo exists, the listing's colour is the colour of the car in that photo
+      const color = photo?.color || pick(COLORS);
+      if (photo?.color) pick(COLORS); // keep the random sequence stable
       const seller = pick(SELLERS);
       const owners = classic ? 1 + Math.floor(rnd() * 3) : 1 + (rnd() < 0.25 ? 1 : 0) + (rnd() < 0.06 ? 1 : 0);
       const mileage =
@@ -146,7 +151,7 @@ export function buildSeedCars() {
         brand, model, variant, year, price, km, fuel, transmission, owners,
         city: loc.city, state: loc.state, rto: loc.rto,
         color: color.name, colorHex: color.hex, bodyType: body, mileage,
-        title, description, features, images: [],
+        title, description, features, images: photo ? photo.files.map((f) => `/cars/${f}`) : [],
         seller: seller.name,
         sellerVerified: seller.verified,
         status: 'approved',

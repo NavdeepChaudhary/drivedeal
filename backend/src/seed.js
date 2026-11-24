@@ -6,12 +6,22 @@ import { buildSeedCars, SELLER_NAMES } from '../../shared/cars.js';
 
 const reset = process.argv.includes('--reset');
 
+// Existing databases: give the sample listings their real photos (never touches seller-uploaded photos).
+export function refreshSeedPhotos() {
+  const upd = db.prepare("UPDATE cars SET images = ?, color = ?, color_hex = ? WHERE title = ? AND images = '[]'");
+  let n = 0;
+  for (const c of buildSeedCars()) {
+    if (c.images.length) n += Number(upd.run(JSON.stringify(c.images), c.color, c.colorHex, c.title).changes);
+  }
+  if (n) console.log(`Added photos to ${n} sample listings.`);
+}
+
 export function seedIfEmpty() {
   if (reset) {
     db.exec('DELETE FROM messages; DELETE FROM wishlist; DELETE FROM cars; DELETE FROM users;');
   }
   const { n } = db.prepare('SELECT COUNT(*) AS n FROM users').get();
-  if (n > 0) return false;
+  if (n > 0) { refreshSeedPhotos(); return false; }
 
   const adminPass = process.env.ADMIN_PASSWORD || crypto.randomBytes(9).toString('base64url');
   const insUser = db.prepare(

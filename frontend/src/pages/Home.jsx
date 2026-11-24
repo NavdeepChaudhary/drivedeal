@@ -3,11 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, BadgeCheck, GitCompare, MessageCircle, Search, ShieldCheck, Calculator, Camera, Handshake } from 'lucide-react';
 import { Section, More } from '../components/Layout.jsx';
 import CarCard from '../components/CarCard.jsx';
-import CarArt from '../components/CarArt.jsx';
-import { api } from '../lib/api.js';
-import { COLORS } from '../../../shared/cars.js';
+import { api, imgUrl } from '../lib/api.js';
+import { HERO } from '../../../shared/photos.js';
 
-const BODY = ['hatchback', 'sedan', 'suv', 'mpv'];
 const BRAND_NOTE = {
   Tata: 'Nexon, Punch, Harrier',
   Mahindra: 'Thar, XUV700, Scorpio',
@@ -19,58 +17,54 @@ const BRAND_NOTE = {
 function Hero() {
   const nav = useNavigate();
   const [q, setQ] = useState('');
-  const [body, setBody] = useState('suv');
-  const [color, setColor] = useState(COLORS[2]);
   return (
-    <div className="grid lg:grid-cols-2 gap-6 px-5 sm:px-10 pt-6 pb-14 items-center">
-      <div className="order-2 lg:order-1 min-w-0">
-        <div className="eyebrow mb-4">India's used car marketplace</div>
-        <h1 className="text-5xl sm:text-7xl font-bold tracking-tight leading-[1.02]">
-          Buy &amp; sell cars the <span className="text-accent">easy</span> way
-        </h1>
-        <p className="mt-6 text-lg text-black/65 max-w-lg">
-          Tata, Mahindra, Maruti Suzuki and more. Find a trusted used car, or list yours and talk to real buyers in minutes.
-        </p>
-        <form
-          onSubmit={(e) => { e.preventDefault(); nav(`/browse?q=${encodeURIComponent(q)}`); }}
-          className="mt-8 flex items-center gap-2 bg-mist rounded-full p-1.5 max-w-lg"
-          role="search"
-        >
-          <Search size={18} className="ml-4 text-black/40 shrink-0" />
-          <input
-            value={q} onChange={(e) => setQ(e.target.value)}
-            placeholder="Try “Nexon”, “Swift” or a city…"
-            className="flex-1 bg-transparent outline-none py-2.5 px-1 min-w-0"
-            aria-label="Search cars"
-          />
-          <button className="btn btn-dark !py-2.5">Search</button>
-        </form>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link to="/browse" className="btn btn-dark">Browse cars <ArrowRight size={16} /></Link>
-          <Link to="/sell" className="btn btn-ghost">Sell your car</Link>
-        </div>
-      </div>
+    <div className="px-3 sm:px-6 pb-4">
+      <div className="relative overflow-hidden rounded-[1.75rem] sm:rounded-[2.25rem] min-h-[560px] sm:min-h-[620px] flex items-center bg-[#1d2a33]">
+        <img
+          src={imgUrl(`/hero/${HERO.file}`)}
+          alt={`${HERO.car} on a coastal road`}
+          className="absolute inset-0 size-full object-cover object-[62%_50%]"
+          fetchPriority="high"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/5 sm:via-black/40" aria-hidden />
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/50 to-transparent" aria-hidden />
 
-      <div className="order-1 lg:order-2 relative min-w-0">
-        <div className="rounded-[2rem] bg-gradient-to-br from-[#f7f7f9] via-[#eceef2] to-[#e0e3e9] overflow-hidden relative">
-          <div className="h-[400px] grid place-items-center px-6 pb-12"><CarArt type={body} color={color.hex} className="w-full max-w-md drop-shadow-xl" /></div>
-          <span className="chip absolute top-4 left-4 !bg-white shadow"><BadgeCheck size={14} className="text-emerald-600" /> Verified sellers</span>
-          <div className="absolute bottom-4 left-4 right-4 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex gap-1.5 bg-white/90 backdrop-blur rounded-full p-1" role="group" aria-label="Body type">
-              {BODY.map((b) => (
-                <button key={b} onClick={() => setBody(b)} aria-pressed={body === b}
-                  className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${body === b ? 'bg-ink text-white' : ''}`}>{b}</button>
-              ))}
-            </div>
-            <div className="flex gap-2 bg-white/90 backdrop-blur rounded-full px-3 py-2" role="group" aria-label="Car colour">
-              {COLORS.map((c) => (
-                <button key={c.name} onClick={() => setColor(c)} aria-label={c.name} aria-pressed={color.name === c.name}
-                  className={`size-5 rounded-full border border-black/15 ${color.name === c.name ? 'ring-2 ring-offset-1 ring-ink' : ''}`}
-                  style={{ background: c.hex }} />
-              ))}
-            </div>
+        <div className="relative z-10 px-6 sm:px-12 py-14 max-w-2xl text-white">
+          <div className="eyebrow !text-white/70 mb-4">India's used car marketplace</div>
+          <h1 className="text-5xl sm:text-7xl font-bold tracking-tight leading-[1.02]">
+            Buy &amp; sell cars the <span className="text-accent">easy</span> way
+          </h1>
+          <p className="mt-6 text-lg text-white/80 max-w-lg">
+            Tata, Mahindra, Maruti Suzuki and more. Find a trusted used car, or list yours and talk to real buyers in minutes.
+          </p>
+          <form
+            onSubmit={(e) => { e.preventDefault(); nav(`/browse?q=${encodeURIComponent(q)}`); }}
+            className="mt-8 flex items-center gap-2 bg-white rounded-full p-1.5 max-w-lg text-ink"
+            role="search"
+          >
+            <Search size={18} className="ml-4 text-black/40 shrink-0" />
+            <input
+              value={q} onChange={(e) => setQ(e.target.value)}
+              placeholder="Try “Nexon”, “Swift” or a city…"
+              className="flex-1 bg-transparent outline-none py-2.5 px-1 min-w-0"
+              aria-label="Search cars"
+            />
+            <button className="btn btn-dark !py-2.5">Search</button>
+          </form>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link to="/browse" className="btn btn-light">Browse cars <ArrowRight size={16} /></Link>
+            <Link to="/sell" className="btn border-white/40 text-white hover:bg-white/10">Sell your car</Link>
           </div>
         </div>
+
+        <a
+          href={HERO.credit.page} target="_blank" rel="noreferrer"
+          className="absolute z-10 right-4 bottom-4 sm:right-6 sm:bottom-6 chip !bg-white/90 backdrop-blur !text-ink shadow"
+          title={`Photo: ${HERO.credit.author} on Unsplash`}
+        >
+          <BadgeCheck size={14} className="text-emerald-600" /> {HERO.car}
+          <span className="hidden sm:inline text-black/50 font-normal">· Photo: {HERO.credit.author}</span>
+        </a>
       </div>
     </div>
   );
